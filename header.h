@@ -16,7 +16,10 @@
 
 typedef struct proc{
     struct proc *next;
-    int    *ksp;
+    int    *ksp;               // at offset 2
+
+    int    uss, usp;           // at offsets 4,6
+    int    inkmode;            // at offset 8
 
     int    pid;                // add pid for identify the proc
     int    status;             // status = FREE|READY|RUNNING|SLEEP|ZOMBIE    
@@ -25,13 +28,10 @@ typedef struct proc{
     int    priority;
     int    event;
     int    exitCode;
+    char   name[32];           // name string of PROC
 
     int    kstack[SSIZE];      // per proc stack area
 }PROC;
-
-PROC proc[NPROC], *running, *freeList, *readyQueue, *sleepList;
-int procSize = sizeof(PROC);
-int nproc = 0;
 extern int color;
 
 /******Conner's Additions Below***********/
@@ -82,7 +82,16 @@ char *table = "0123456789ABCDEF";
 char mbr[512];
 char ans[64];
 
-/******function headers*******/
+/****** type.h additions *********/
+PROC proc[NPROC], *running, *freeList, *readyQueue, *sleepList;
+int procSize = sizeof(PROC);
+int nproc = 0;
+
+int body();
+char *pname[]={"Sun", "Mercury", "Venus", "Earth",  "Mars", "Jupiter",
+               "Saturn", "Uranus", "Neptune" };
+
+/****** function headers *******/
 // t.c
 int init();
 int scheduler();
@@ -100,9 +109,13 @@ do_wait();
 // kernel.c
 int ksleep(int event);
 int kwakeup(int event);
-
 int kexit(int exitvalue);
 int kwait(int *status);
+
+PROC *kfork(char *filename);
+int kgetpid();
+int kprintstatus();
+int kchname(char name[32]);
 
 //io.c
 int rpu(u32 x);

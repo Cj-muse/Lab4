@@ -95,3 +95,17 @@ int kwait(int *status)
 		ksleep(running); // still has kids alive: sleep on PROC address
 	}
 }
+
+PROC *kfork(char *filename)
+{}
+
+int kgetpid()
+{}
+
+int kprintstatus()
+{}
+
+int kchname(char name[32])
+{}
+
+
