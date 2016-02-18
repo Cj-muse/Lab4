@@ -27,7 +27,7 @@ int init()
     readyQueue = sleepList = 0;
 
     /**** create P0 as running ******/
-    p = get_proc(&freeList);
+    p = get_proc(&freeList); // adjust get proc to accept any list?
     p->status = RUNNING;
     p->ppid   = 0;
     p->parent = p;
@@ -40,8 +40,8 @@ int scheduler()
 {
     if (running->status == READY)
         enqueue(&readyQueue, running);
-     running = dequeue(&readyQueue);
-     color = running->pid + 0x0A;
+    running = dequeue(&readyQueue);
+    color = running->pid + 0x0A;
 }
 
 int int80h();
@@ -50,8 +50,8 @@ int set_vector(u16 segment, u16 handler)
      // put_word(word, segment, offset)
 
 	  // don't know what to do with vector...
-     // put_word(handler, 0, vector<<2);
-     // put_word(0x1000,  0,(vector<<2) + 2);
+      put_word(handler, 0, 80*4);
+      put_word(0x1000,  0,(80*4) + 2);
 }
             
 main()

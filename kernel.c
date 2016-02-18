@@ -97,7 +97,37 @@ int kwait(int *status)
 }
 
 PROC *kfork(char *filename)
-{}
+{
+	int i;
+   PROC *p = get_proc(&freeList, FREE);
+   
+   if (!p)
+   {
+      printf("no more PROC, kfork() failed\n\r");
+      return 0;
+   }
+
+   p->status = READY;
+   p->priority = 1; // priority = 1 for all proc except P0
+   p->ppid = running->pid; // parent = running
+   p->parent = running;
+
+   /* initialize new proc's kstack[ ] */
+   for (i=1; i<10; i++) // saved CPU registers
+   {
+      p->kstack[SSIZE-i]= 0 ; // all 0's
+   }
+
+   p->kstack[SSIZE-1] = (int)body; // resume point=address of body()
+   p->ksp = &p->kstack[SSIZE-9]; // proc saved sp
+
+   enqueue(&readyQueue, p); // enter p into readyQueue by priority
+   printf("kfork(): success\n\r");
+   //printList("readyqueue", readyQueue);
+   //printList("freeList", freeList);
+
+   return p;
+}
 
 int kgetpid()
 {}
