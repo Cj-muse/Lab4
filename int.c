@@ -6,13 +6,19 @@
 ----------------------------------------------------------------------------
 ***************************************************************************/
 
-/****************** syscall handler in C ***************************/
 int kcinth()
 {
-   int a,b,c,d, r;
-	char str[32];
-
-	//==> WRITE CODE TO GET get syscall parameters a,b,c,d from ustack 
+  char str[64];
+  u16 segment, offset; int a, b, c, d, r;
+  segment = running->uss; offset = running->usp;
+  
+  printf("kcinth()\n\r");
+  /* get syscall parameters from ustack */
+  a = get_word(segment, offset + 2*PA);
+  b = get_word(segment, offset + 2*(PA+1));
+  c = get_word(segment, offset + 2*(PA+2));
+  d = get_word(segment, offset + 2*(PA+3));
+  /* route syscall call to kernel functions by call# a */
 
    switch(a){
        case 0 : r = kgetpid();        break;
@@ -22,12 +28,12 @@ int kcinth()
        case 4 : r = ktswitch();       break;
        case 5 : r = kkwait(b);        break;
        case 6 : r = kkexit(b);        break;
-
        case 99: kkexit(b);            break;
-       default: printf("invalid syscall # : %d\n", a); 
+       default: printf("invalid syscall # : %d\n", a);
+
    }
 
-	//==> WRITE CODE to let r be the return value to Umode
+	 put_word(r, segment, offset + 2*AX); // return value in uax
 
 }
 
