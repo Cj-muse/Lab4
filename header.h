@@ -5,6 +5,8 @@
 
 #define NPROC    9
 #define SSIZE 1024
+#define AX 8
+#define PA 13
 
 /******* PROC status ********/
 #define FREE     0
@@ -22,7 +24,7 @@ typedef struct proc{
     int    inkmode;            // at offset 8
 
     int    pid;                // add pid for identify the proc
-    int    status;             // status = FREE|READY|RUNNING|SLEEP|ZOMBIE    
+    int    status;             // status = FREE|READY|RUNNING|SLEEP|ZOMBIE
     int    ppid;               // parent pid
     struct proc *parent;
     int    priority;
@@ -33,6 +35,7 @@ typedef struct proc{
     int    kstack[SSIZE];      // per proc stack area
 }PROC;
 extern int color;
+extern int MTXSEG  = 0x1000;
 
 /******Conner's Additions Below***********/
 // additions from io.h from lab 2
@@ -49,21 +52,21 @@ typedef unsigned long  u32;
 #define  YELLOW 14
 
 struct partition {         // Partition table entry in MBR
-       u8  drive;          // 0x80 - active 
-       u8  head;     // starting head 
-       u8  sector;      // starting sector 
-       u8  cylinder;       // starting cylinder 
-       u8  type;     // partition type 
-       u8  end_head;       // end head 
-       u8  end_sector;     // end sector 
-       u8  end_cylinder;   // end cylinder 
-       u32 start_sector;   // starting sector counting from 0 
-       u32 nr_sectors;     // nr of sectors in partition 
+       u8  drive;          // 0x80 - active
+       u8  head;     // starting head
+       u8  sector;      // starting sector
+       u8  cylinder;       // starting cylinder
+       u8  type;     // partition type
+       u8  end_head;       // end head
+       u8  end_sector;     // end sector
+       u8  end_cylinder;   // end cylinder
+       u32 start_sector;   // starting sector counting from 0
+       u32 nr_sectors;     // nr of sectors in partition
 };
 
-struct dap{                // DAP for extended INT 13-42  
+struct dap{                // DAP for extended INT 13-42
        u8   len;           // dap length=0x10 (16 bytes)
-       u8   zero;          // must be 0  
+       u8   zero;          // must be 0
        u16  nsector;       // number of sectors to read: 1 to 127
        u16  addr;          // memory address = (segment:addr)
        u16  segment;
@@ -87,6 +90,7 @@ PROC proc[NPROC], *running, *freeList, *readyQueue, *sleepList;
 int procSize = sizeof(PROC);
 int nproc = 0;
 
+int goUmode();
 int body();
 char *pname[]={"Sun", "Mercury", "Venus", "Earth",  "Mars", "Jupiter",
                "Saturn", "Uranus", "Neptune" };
@@ -96,7 +100,6 @@ char *pname[]={"Sun", "Mercury", "Venus", "Earth",  "Mars", "Jupiter",
 int init();
 int scheduler();
 PROC *kfork();
-int body(void);
 
 // commands.c
 do_tswitch();
@@ -133,7 +136,4 @@ int isDigit(char c);
 int power(int x, int y);
 
 
-#endif 
-
-
-
+#endif

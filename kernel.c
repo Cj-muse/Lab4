@@ -54,7 +54,7 @@ int kexit(int exitvalue)
 	   	wakeupP1++;
 		}
 	}
-	
+
 	// record exitValue in PROC.exitCode for parent to get
 	running->exitCode = exitvalue;
 
@@ -97,15 +97,79 @@ int kwait(int *status)
 }
 
 PROC *kfork(char *filename)
-{}
+{
+	 int i, segment;
+   PROC *p = get_proc(&freeList, FREE);
+
+   if (!p)
+   {
+      printf("no more PROC, kfork() failed\n\r");
+      return 0;
+   }
+
+   p->status = READY;
+   p->priority = 1; // priority = 1 for all proc except P0
+   p->ppid = running->pid; // parent = running
+   p->parent = running;
+
+   /* initialize new proc's kstack[ ] */
+   for (i=1; i<10; i++) // saved CPU registers
+   {
+      p->kstack[SSIZE-i]= 0 ; // all 0's
+   }
+
+   p->kstack[SSIZE-1] = (int)body; // resume point=address of body()
+   p->ksp = &p->kstack[SSIZE-9]; // proc saved sp
+
+
+	if(filename)
+	{
+		segment = ((p->pid+1)*0x1000);
+		p->uss = segment;
+
+		//init stack to empty
+
+
+		for (i=1; i<=12; i++){         // write 0's to ALL of them
+			put_word(0, p->uss, -2*i);
+		}
+		load(filename, p->uss);
+		// Fill in uDS, uES, uCS
+		put_word(0x0200,  p->uss, -2*1);   /* flag */
+		put_word(p->uss,  p->uss, -2*2);   /* uCS */
+		put_word(p->uss,  p->uss, -2*11);   /* uES */
+		put_word(p->uss,  p->uss, -2*12);   /* uDS */
+
+		/* initial USP relative to USS */
+		p->usp = -2*12; //-24
+	}
+	else
+	{
+		p->uss = 0;
+	}
+
+	printf("\rp->uss = %d p->usp = %d\n\r", p->uss, p->usp);
+   enqueue(&readyQueue, p); // enter p into readyQueue by priority
+   printf("kfork(): success\n\r");
+   //printList("readyqueue", readyQueue);
+   //printList("freeList", freeList);
+
+   return p;
+}
 
 int kgetpid()
-{}
+{
+	return running->pid;
+}
 
 int kprintstatus()
 {}
 
 int kchname(char name[32])
-{}
+{
+	char str[64];
+	printf("Please enter name: ");\
+	gets(str);
 
-
+	//change the name
+}

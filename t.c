@@ -6,8 +6,38 @@
 /* #include "queue.c" */
 /* #include "loader.c" */
 
-#include "kernel.c"           // YOUR kernel.c file
-#include "int.c"              // YOUR int.c    file
+//#include "kernel.c"           // YOUR kernel.c file
+//#include "int.c"              // YOUR int.c    file
+
+
+int body(void)
+{
+   char c, str[64];
+
+   printf("proc %d resumes to body()\n\r", running->pid);
+   while(1)
+   {
+      //color = running->pid + 7;
+      printList("FreeList",freeList);
+      printList("ReadyQueue",readyQueue);
+      printList("SleepList",sleepList);
+
+      printf("\rproc %d running : enter a key [s|f|z|a|w|q|u]: ", running->pid);
+      c = getc();
+      printf("%c\n\r", c);
+      switch(c)
+      {
+         case 's': tswitch();  break;
+         case 'q': do_exit();  break;
+         case 'f': kfork("/bin/u1");    break;
+         case 'z': do_sleep(); break;
+         case 'a': do_wake();  break;
+         case 'w': do_wait();  break;
+         case 'u': goUmode();  break;
+         default: break;
+      }
+   }
+}
 
 int init()
 {
@@ -18,7 +48,7 @@ int init()
         p = &proc[i];
         p->pid = i;
         p->status = FREE;
-        p->priority = 0;  
+        p->priority = 0;
         strcpy(proc[i].name, pname[i]);
         p->next = &proc[i+1];
     }
@@ -27,33 +57,39 @@ int init()
     readyQueue = sleepList = 0;
 
     /**** create P0 as running ******/
-    p = get_proc(&freeList);
+    p = get_proc(&freeList, FREE);
     p->status = RUNNING;
     p->ppid   = 0;
     p->parent = p;
     running = p;
     nproc = 1;
+    running->status = READY;
     printf("done\n\r");
-} 
+}
 
 int scheduler()
 {
-    if (running->status == READY)
-        enqueue(&readyQueue, running);
-     running = dequeue(&readyQueue);
-     color = running->pid + 0x0A;
+  /*printf("Schedualer: running->status = %d\n\r", running->status);
+  printf("Schedualer: running->pid = %d\n\r", running->pid);
+  printList("freeList", freeList);
+  printList("readyQueue", readyQueue);
+  printList("sleepList", sleepList);*/
+   if (running->status == READY)
+	{
+   	enqueue(&readyQueue, running);
+	}
+   running = dequeue(&readyQueue);
+   color = running->pid + 0x0A;
+   //body();
 }
 
 int int80h();
-int set_vector(u16 segment, u16 handler)
+int set_vector(u16 vector , u16 handler)
 {
-     // put_word(word, segment, offset)
-
-	  // don't know what to do with vector...
-     // put_word(handler, 0, vector<<2);
-     // put_word(0x1000,  0,(vector<<2) + 2);
+	put_word(handler, 0, vector<<2);
+   put_word(0x1000,  0,(vector<<2) + 2);
 }
-            
+
 main()
 {
     printf("MTX starts in main()\n\r");

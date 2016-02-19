@@ -6,9 +6,9 @@ char *cmd[]={"getpid", "ps", "chname", "kfork", "switch", "wait", "exit", 0};
 
 int show_menu()
 {
-   printf("***************** Menu *******************\n");
-   printf("*  ps  chname  kfork  switch  wait  exit *\n");
-   printf("******************************************\n");
+   printf("***************** Menu *******************\n\r");
+   printf("*  ps  chname  kfork  switch  wait  exit *\n\r");
+   printf("******************************************\n\r");
 }
 
 int find_cmd(char *name)
@@ -35,13 +35,13 @@ int chname()
 }
 
 int kfork()
-{   
+{
   int child, pid;
   pid = getpid();
-  printf("proc %d enter kernel to kfork a child\n", pid); 
+  printf("proc %d enter kernel to kfork a child\n", pid);
   child = syscall(3, 0, 0);
   printf("proc %d kforked a child %d\n", pid, child);
-}    
+}
 
 int kswitch()
 {
@@ -56,8 +56,8 @@ int wait()
     printf("proc %d back from wait, dead child=%d", getpid(), child);
     if (child>=0)
         printf("exitValue=%d", exitValue);
-    printf("\n"); 
-} 
+    printf("\n");
+}
 
 int geti()
 {
