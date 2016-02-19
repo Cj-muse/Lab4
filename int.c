@@ -36,7 +36,8 @@ int kcinth()
 
 int kkfork()
 {
-  //use you kfork() in kernel;
+   //use you kfork() in kernel;
+   kfork();
   //return child pid or -1 to Umode!!!
 }
 
