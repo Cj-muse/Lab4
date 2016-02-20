@@ -13,7 +13,7 @@ int kcinth()
   segment = running->uss; offset = running->usp;
 
   printf("kcinth()\n\r");
-  printf("here\n");
+
   /* get syscall parameters from ustack */
   a = get_word(segment, offset + 2*PA);
   b = get_word(segment, offset + 2*(PA+1));
@@ -29,13 +29,16 @@ int kcinth()
        case 4 : r = ktswitch();       break;
        case 5 : r = kkwait(b);        break;
        case 6 : r = kkexit(b);        break;
+
+       /***gec()/putc syscalls****/
+       case 7 : r = kgetc();        break;
+       case 8 : r = kputc(b);        break;
+
        case 99: kkexit(b);            break;
        default: printf("invalid syscall # : %d\n", a);
 
    }
-
 	 put_word(r, segment, offset + 2*AX); // return value in uax
-
 }
 
 //============= WRITE C CODE FOR syscall functions ======================
@@ -77,4 +80,29 @@ int kkexit(int value)
     r = kexit(i);
     if (r >= 0)  { return 0; }
     return -1;
+}
+
+// kgetc() and kputc();
+int kgetc()
+{
+  char c = getc();
+  if(c == -1)
+  {
+    printf("kgetc() failed!\n");
+    return -1;
+  }
+  printf("kgetc() success!\n");
+  return c;
+}
+
+int kputc(char c)
+{
+  int i = putc(c);
+  if (i == -1)
+  {
+    printf("kputc() failed!\n");
+    return -1;
+  }
+  printf("kputc() success!\n");
+  return i;
 }

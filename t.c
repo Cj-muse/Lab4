@@ -10,11 +10,7 @@ int body(void)
    printf("proc %d resumes to body()\n\r", running->pid);
    while(1)
    {
-      printList("FreeList",freeList);
-      printList("ReadyQueue",readyQueue);
-      printList("SleepList",sleepList);
-
-      printf("\rproc %d running : enter a key [s|f|z|a|w|q|u]: ", running->pid);
+      printf("\rproc %d running : enter a key [s|f|z|a|w|q|u|p|l]: ", running->pid);
       c = getc();
       printf("%c\n\r", c);
       switch(c)
@@ -26,6 +22,8 @@ int body(void)
          case 'a': do_wake();  break;
          case 'w': do_wait();  break;
          case 'u': goUmode();  break;
+         case 'p': do_ps();    break;
+         case 'l': showLists();break;
          default: break;
       }
    }
@@ -61,19 +59,12 @@ int init()
 
 int scheduler()
 {
-  /*printf("Schedualer: running->status = %d\n\r", running->status);
-  printf("Schedualer: running->pid = %d\n\r", running->pid);
-  printList("freeList", freeList);
-  printList("readyQueue", readyQueue);
-  printList("sleepList", sleepList);*/
-   if (running->status == READY)
+  if (running->status == READY)
 	{
    	enqueue(&readyQueue, running);
 	}
    running = dequeue(&readyQueue);
    color = running->pid + 1;
-   printf("color = %d\n\r", color);
-   //body();
 }
 
 int int80h();

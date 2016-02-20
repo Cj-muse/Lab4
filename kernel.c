@@ -122,15 +122,14 @@ PROC *kfork(char *filename)
    p->kstack[SSIZE-1] = (int)body; // resume point=address of body()
    p->ksp = &p->kstack[SSIZE-9]; // proc saved sp
 
-
 	if(filename)
 	{
 		segment = ((p->pid+1)*0x1000);
 		p->uss = segment;
 
 		//init stack to empty
-		printf("pid %d\n\r", p->pid);
-		printf("segment %x\n\r", segment);
+		//printf("pid %d\n\r", p->pid);
+		//printf("segment %x\n\r", segment);
 		load(filename, segment);
 
 		for (i=1; i<=12; i++){         // write 0's to ALL of them
@@ -170,19 +169,52 @@ int kprintstatus()
 		int i = 0;
 		while (i < 10)
 		{
-			printf("|name:        %s", proc[i].name);
-			printf("|pid:         %d", proc[i].pid);
-			printf("|status:      %d", proc[i].status);
-			printf("|ppid:        %d\n", proc[i].ppid);
+			printf("________________________________________\n");
+			printf("|name:	%s ", proc[i].name);
+			printf("|pid:	%d ", proc[i].pid);
+			printf("|status:	%d ", proc[i].status);
+			printf("|ppid:	%d\n ", proc[i].ppid);
 			i++;
 		}
 }
 
 int kchname(char name[32])
 {
-	char str[64];
+	char str[32];
 	printf("Please enter name: ");\
 	gets(str);
 
 	//change the name
+	strcpy(running->name, str);
 }
+
+/////////////////
+/* byte movement
+u8 get_byte(u16 segment, u16 offset) {
+	u8 byte;
+	setds(segment);
+	byte = *(u8 *)offset;
+	setds(MTXSEG);
+	return byte;
+}
+
+int put_byte(u8 byte, u16 segment, u16 offset) {
+	setds(segment);
+	*(u8 *)offset = byte;
+	setds(MTXSEG);
+}
+
+u16 get_word(u16 segment, u16 offset) {
+	u16 word;
+	setds(segment);
+	word = *(u16 *)offset;
+	setds(MTXSEG);
+	return word;
+}
+
+int put_word(u16 word, u16 segment, u16 offset) {
+	setds(segment);
+	*(u16 *)offset = word;
+	setds(MTXSEG);
+}
+*/

@@ -96,6 +96,9 @@ char *pname[]={"Sun", "Mercury", "Venus", "Earth",  "Mars", "Jupiter",
                "Saturn", "Uranus", "Neptune" };
 
 /****** function headers *******/
+//ts.s
+int goUmode();
+
 // t.c
 int init();
 int scheduler();
@@ -104,6 +107,7 @@ PROC *kfork();
 // commands.c
 do_tswitch();
 do_kfork();
+do_ps();
 do_exit();
 do_sleep();
 do_wake();
@@ -135,5 +139,7 @@ int strtoint(char *str);
 int isDigit(char c);
 int power(int x, int y);
 
+// queue
+void showLists();
 
 #endif
