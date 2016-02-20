@@ -26,7 +26,7 @@
 start:	mov  ax,cs
 	mov  ds,ax
 	mov  ss,ax
-        mov  es,ax
+  mov  es,ax
 	mov  sp,#_proc
 	add  sp,_procSize
 
@@ -83,7 +83,7 @@ _int80h:
         push cs
         pop  ds                 ! KDS now
 
-	      mov bx,_running  	! ready to access proc
+	      mov bx,_running  	      ! ready to access proc
         mov USS[bx],ss          ! save uSS  in proc.USS
         mov USP[bx],sp          ! save uSP  in proc.USP
 
@@ -101,14 +101,14 @@ _int80h:
 
 _goUmode:
         cli
-	       mov bx,_running 	! bx -> proc
+	      mov bx,_running 	      ! bx -> proc
         mov ax,USS[bx]
         mov ss,ax               ! restore uSS
         mov sp,USP[bx]          ! restore uSP
 
-	pop ds
-	pop es
-	pop di
+	      pop ds
+	      pop es
+	      pop di
         pop si
         pop bp
         pop dx

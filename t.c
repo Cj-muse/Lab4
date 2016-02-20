@@ -22,7 +22,7 @@ int body(void)
       printList("ReadyQueue",readyQueue);
       printList("SleepList",sleepList);
 
-      printf("\rproc %d running : enter a key [s|f|z|a|w|q|u]: ", running->pid);
+      printf("\rproc %d running : enter a key [s|f|z|a|w|q|u|p]: ", running->pid);
       c = getc();
       printf("%c\n\r", c);
       switch(c)
@@ -34,6 +34,7 @@ int body(void)
          case 'a': do_wake();  break;
          case 'w': do_wait();  break;
          case 'u': goUmode();  break;
+         case 'p': do_ps();    break;
          default: break;
       }
    }
@@ -86,8 +87,8 @@ int scheduler()
 int int80h();
 int set_vector(u16 vector , u16 handler)
 {
-	put_word(handler, 0, vector<<2);
-   put_word(0x1000,  0,(vector<<2) + 2);
+	put_word(handler, 0x0000, vector<<2);
+   put_word(0x1000,  0x0000,(vector<<2) + 2);
 }
 
 main()
