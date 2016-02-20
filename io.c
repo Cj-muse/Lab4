@@ -1,6 +1,6 @@
 #include "header.h"
 
-int rpu(u32 x)
+/*int rpu(u32 x)
 {
   char c;
   if (x)
@@ -9,7 +9,7 @@ int rpu(u32 x)
       rpu(x / BASE);
       putc(c);
     }
-} 
+}
 int rpu16(u16 x)
 {
   char c;
@@ -19,7 +19,19 @@ int rpu16(u16 x)
       rpu16(x / BASE);
       putc(c);
     }
-} 
+}
+
+int rpl(u32 x)
+{
+  char c;
+  if (x)
+    {
+      c = table[x % BASE];
+      rpl(x / BASE);
+      putc(c);
+    }
+}
+
 int printu(u32 x)
 {
   if (x==0)
@@ -35,7 +47,15 @@ int printd(int x) //prints an integer
     putc('0');
   else
    BASE = 10;
-   rpu16(x); 
+   rpu16(x);
+}
+int printl(u32 x)
+{
+  if (x == 0)
+    putc('0');
+  else
+   BASE = 10;
+   rpl(x);
 }
 
 int printo(u32 x) //prints x in OCTal
@@ -45,7 +65,7 @@ int printo(u32 x) //prints x in OCTal
   else
     BASE = 8;
     rpu(x);
-} 
+}
 
 int printx(u32 x) //prints x in hex
 {
@@ -54,7 +74,7 @@ int printx(u32 x) //prints x in hex
   else
     BASE = 16;
     rpu(x);
-} 
+}
 
 void printf(char *fmt, ...)
 {
@@ -65,22 +85,23 @@ void printf(char *fmt, ...)
 
   	//asm("mov ebp, FP");
   	//ip = FP + 3;
-  	
+
 	for(i = 0; fmt[i]; i++)
   	{
 		if (fmt[i] == '%')
 		{
-	  		i++;
+	  	i++;
 			switch(fmt[i])
 			{
 				case'c': putc(*ip);   ip++;break;
 				case's': prints(*ip); ip++;break;
 				case'u': printu(*ip); ip++;break;
-				case'd': printd(*ip); ip++;break;
+			  case'd': printd(*ip); ip++;break;
+        case'l': printl(*(u32*)ip++); ip++;break;
 				case'o': printo(*ip); ip++;break;
 				case'x': printx(*ip); ip++;break;
 				default: putc(fmt[i]);ip++;break;
-		  	}	  
+		  	}
 	 	}
       else
 		{
@@ -89,9 +110,8 @@ void printf(char *fmt, ...)
 	}
 }
 
-
 int prints(char *s)
-{ 
+{
 	int i = 0;
 	while(s[i])
 	{
@@ -100,16 +120,13 @@ int prints(char *s)
 	}
 }
 
-strcmp()
-{}
-
 //returns a string using the assembly function getc()
 int gets(char s[64])
-{	
+{
 	int i = 0;
 	char c = '0';
-	
-	// put carrige return and newline on front of string 
+
+	// put carrige return and newline on front of string
 //	s[0] = '\n';
 //	s[1] = '\r';
 //	i = 2;
@@ -126,12 +143,12 @@ int gets(char s[64])
 	s[i] = '\n';
 	s[i+1] = '\r';
 	s[i+2] = 0;
-}
+}*/
 
 int strtoint(char *str)
 {
 	int integer = 0, i = 0, mul = 0;
-		
+
 	//traverse to the end of the string
 	while(str[i] != '\n')
 	{i++;	}
@@ -171,14 +188,13 @@ int power(int x, int y)
 	if (y == 0)
 	{
 		return 1;
-	}	
+	}
 
 	ret = x;
 	for(i = 1; i < y; i++)
 	{
 		ret = ret * x;
 	}
-	//printf("power(): returning %d \n\r", ret); 
+	//printf("power(): returning %d \n\r", ret);
 	return ret;
 }
-

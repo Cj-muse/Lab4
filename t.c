@@ -2,13 +2,6 @@
 /**************************************************
   bio.o, queue.o loader.o are in mtxlib
 **************************************************/
-/* #include "bio.c" */
-/* #include "queue.c" */
-/* #include "loader.c" */
-
-//#include "kernel.c"           // YOUR kernel.c file
-//#include "int.c"              // YOUR int.c    file
-
 
 int body(void)
 {
@@ -17,12 +10,7 @@ int body(void)
    printf("proc %d resumes to body()\n\r", running->pid);
    while(1)
    {
-      //color = running->pid + 7;
-      printList("FreeList",freeList);
-      printList("ReadyQueue",readyQueue);
-      printList("SleepList",sleepList);
-
-      printf("\rproc %d running : enter a key [s|f|z|a|w|q|u|p]: ", running->pid);
+      printf("\rproc %d running : enter a key [s|f|z|a|w|q|u|p|l]: ", running->pid);
       c = getc();
       printf("%c\n\r", c);
       switch(c)
@@ -35,6 +23,7 @@ int body(void)
          case 'w': do_wait();  break;
          case 'u': goUmode();  break;
          case 'p': do_ps();    break;
+         case 'l': showLists();break;
          default: break;
       }
    }
@@ -70,32 +59,26 @@ int init()
 
 int scheduler()
 {
-  /*printf("Schedualer: running->status = %d\n\r", running->status);
-  printf("Schedualer: running->pid = %d\n\r", running->pid);
-  printList("freeList", freeList);
-  printList("readyQueue", readyQueue);
-  printList("sleepList", sleepList);*/
-   if (running->status == READY)
+  if (running->status == READY)
 	{
    	enqueue(&readyQueue, running);
 	}
    running = dequeue(&readyQueue);
-   color = running->pid + 0x0A;
-   //body();
+   color = running->pid + 1;
 }
 
 int int80h();
 int set_vector(u16 vector , u16 handler)
 {
-	put_word(handler, 0x0000, vector<<2);
-   put_word(0x1000,  0x0000,(vector<<2) + 2);
+	 put_word(handler, 0, vector<<2);
+   put_word(0x1000,  0,(vector<<2) + 2);
 }
 
 main()
 {
     printf("MTX starts in main()\n\r");
     init();      // initialize and create P0 as running
-    set_vector(80, int80h);
+    set_vector(80, (int)int80h);
 
     kfork("/bin/u1");     // P0 kfork() P1
 

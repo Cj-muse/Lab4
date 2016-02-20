@@ -11,8 +11,9 @@ int kcinth()
   char str[64];
   u16 segment, offset; int a, b, c, d, r;
   segment = running->uss; offset = running->usp;
-  
+
   printf("kcinth()\n\r");
+
   /* get syscall parameters from ustack */
   a = get_word(segment, offset + 2*PA);
   b = get_word(segment, offset + 2*(PA+1));
@@ -28,13 +29,16 @@ int kcinth()
        case 4 : r = ktswitch();       break;
        case 5 : r = kkwait(b);        break;
        case 6 : r = kkexit(b);        break;
+
+       /***gec()/putc syscalls****/
+       case 7 : r = kgetc();        break;
+       case 8 : r = kputc(b);        break;
+
        case 99: kkexit(b);            break;
        default: printf("invalid syscall # : %d\n", a);
 
    }
-
 	 put_word(r, segment, offset + 2*AX); // return value in uax
-
 }
 
 //============= WRITE C CODE FOR syscall functions ======================
@@ -42,8 +46,13 @@ int kcinth()
 
 int kkfork()
 {
-  //use you kfork() in kernel;
-  //return child pid or -1 to Umode!!!
+   //use you kfork() in kernel;
+   PROC *child = kfork("/bin/u1");
+   if(child->pid >= 0)
+   {
+     return child->pid;
+   }
+   return -1;  //return child pid or -1 to Umode!!!
 }
 
 int ktswitch()
@@ -53,13 +62,47 @@ int ktswitch()
 
 int kkwait(int *status)
 {
-
   //use YOUR kwait() in LAB3;
+  int r = kwait(status);
+  if (r >= 0)  { return 0; }
+  return -1;
   //return values to Umode!!!
 }
 
 int kkexit(int value)
 {
-    //use your kexit() in LAB3
-    //do NOT let P1 die
+    char str[64];
+    int i = 0, r = 0;
+
+    printf("enter exit value: ");
+    gets(str);
+    i = strtoint(str);
+    r = kexit(i);
+    if (r >= 0)  { return 0; }
+    return -1;
+}
+
+// kgetc() and kputc();
+int kgetc()
+{
+  char c = getc();
+  if(c == -1)
+  {
+    printf("kgetc() failed!\n");
+    return -1;
+  }
+  printf("kgetc() success!\n");
+  return c;
+}
+
+int kputc(char c)
+{
+  int i = putc(c);
+  if (i == -1)
+  {
+    printf("kputc() failed!\n");
+    return -1;
+  }
+  printf("kputc() success!\n");
+  return i;
 }

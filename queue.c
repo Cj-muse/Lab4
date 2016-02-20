@@ -132,3 +132,10 @@ int printList(char *name, PROC *list) //: print name=list contents
 	}
 	printf("NULL\n\r");
 }
+
+void showLists()
+{
+  printList("freeList", freeList);
+  printList("readyQueue", readyQueue);
+  printList("sleepList", sleepList);  
+}

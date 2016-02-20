@@ -98,13 +98,14 @@ int kwait(int *status)
 
 PROC *kfork(char *filename)
 {
-	 int i, segment;
+	 int i;
+	 u16 segment;
    PROC *p = get_proc(&freeList, FREE);
 
    if (!p)
    {
       printf("no more PROC, kfork() failed\n\r");
-      return 0;
+      return (-1);
    }
 
    p->status = READY;
@@ -127,15 +128,19 @@ PROC *kfork(char *filename)
 		p->uss = segment;
 
 		//init stack to empty
+		//printf("pid %d\n\r", p->pid);
+		//printf("segment %x\n\r", segment);
+		load(filename, segment);
+
 		for (i=1; i<=12; i++){         // write 0's to ALL of them
-			put_word(0, p->uss, -2*i);
+			put_word(0, segment, -2*i);
 		}
-		load(filename, p->uss);
+
 		// Fill in uDS, uES, uCS
-		put_word(0x0200,  p->uss, -2*1);   /* flag */
-		put_word(p->uss,  p->uss, -2*2);   /* uCS */
-		put_word(p->uss,  p->uss, -2*11);   /* uES */
-		put_word(p->uss,  p->uss, -2*12);   /* uDS */
+		put_word(0x0200,  segment, -2*1);   /* flag */
+		put_word(segment,  segment, -2*2);   /* uCS */
+		put_word(segment,  segment, -2*11);   /* uES */
+		put_word(segment,  segment, -2*12);   /* uDS */
 
 		/* initial USP relative to USS */
 		p->usp = -2*12; //-24
@@ -145,45 +150,42 @@ PROC *kfork(char *filename)
 		p->uss = 0;
 	}
 
-	printf("\rp->uss = %d p->usp = %d\n\r", p->uss, p->usp);
-   enqueue(&readyQueue, p); // enter p into readyQueue by priority
-   printf("kfork(): success\n\r");
-   //printList("readyqueue", readyQueue);
-   //printList("freeList", freeList);
+	printf("\rp->uss = %x p->usp = %d\n\r", p->uss, p->usp);
+  enqueue(&readyQueue, p); // enp intreadyQueue by priority
+  printf("kfork(): success\n\r");
+  //printList("readyqueue", readyQueue);
+  //printList("freeList", freeList)	;
 
-   return p;
+  return p;
 }
 
 int kgetpid()
 {
-	return running->pid;
+			return running->pid;
 }
 
 int kprintstatus()
 {
-	printf("_______________________________\n\r");
-	printf("PROC %d Status. \n\r", running->pid);
-	printf("ksp:          %d\n\r", running->ksp);
-	printf("usp:          %d\n\r", running->usp);
-	printf("uss:          %d\n\r", running->uss);
-	printf("inkmode:      %d\n\r", running->inkmode);
-	printf("pid:          %d\n\r", running->pid);
-	printf("status:       %d\n\r", running->status);
-	printf("ppid          %d\n\r", running->ppid);
-	printf("priority:     %d\n\r", running->priority);
-	printf("event:        %d\n\r", running->event);
-	printf("exitcode:     %d\n\r", running->exitCode);
-	printf("name:         %s\n\r", running->name);
-	printf("_______________________________\n\r");
+		int i = 0;
+		while (i < 10)
+		{
+			printf("________________________________________\n");
+			printf("|name:	%s ", proc[i].name);
+			printf("|pid:	%d ", proc[i].pid);
+			printf("|status:	%d ", proc[i].status);
+			printf("|ppid:	%d\n ", proc[i].ppid);
+			i++;
+		}
 }
 
 int kchname(char name[32])
 {
-	char str[64];
+	char str[32];
 	printf("Please enter name: ");\
 	gets(str);
 
 	//change the name
+	strcpy(running->name, str);
 }
 
 /////////////////

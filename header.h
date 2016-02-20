@@ -90,7 +90,7 @@ PROC proc[NPROC], *running, *freeList, *readyQueue, *sleepList;
 int procSize = sizeof(PROC);
 int nproc = 0;
 
-int goUmode();
+//int goUmode();
 int body();
 char *pname[]={"Sun", "Mercury", "Venus", "Earth",  "Mars", "Jupiter",
                "Saturn", "Uranus", "Neptune" };
@@ -139,5 +139,7 @@ int strtoint(char *str);
 int isDigit(char c);
 int power(int x, int y);
 
+// queue
+void showLists();
 
 #endif
