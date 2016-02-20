@@ -2,13 +2,6 @@
 /**************************************************
   bio.o, queue.o loader.o are in mtxlib
 **************************************************/
-/* #include "bio.c" */
-/* #include "queue.c" */
-/* #include "loader.c" */
-
-//#include "kernel.c"           // YOUR kernel.c file
-//#include "int.c"              // YOUR int.c    file
-
 
 int body(void)
 {
@@ -17,7 +10,6 @@ int body(void)
    printf("proc %d resumes to body()\n\r", running->pid);
    while(1)
    {
-      //color = running->pid + 7;
       printList("FreeList",freeList);
       printList("ReadyQueue",readyQueue);
       printList("SleepList",sleepList);
@@ -79,14 +71,15 @@ int scheduler()
    	enqueue(&readyQueue, running);
 	}
    running = dequeue(&readyQueue);
-   color = running->pid + 0x0A;
+   color = running->pid + 1;
+   printf("color = %d\n\r", color);
    //body();
 }
 
 int int80h();
 int set_vector(u16 vector , u16 handler)
 {
-	put_word(handler, 0, vector<<2);
+	 put_word(handler, 0, vector<<2);
    put_word(0x1000,  0,(vector<<2) + 2);
 }
 
@@ -94,7 +87,7 @@ main()
 {
     printf("MTX starts in main()\n\r");
     init();      // initialize and create P0 as running
-    set_vector(80, int80h);
+    set_vector(80, (int)int80h);
 
     kfork("/bin/u1");     // P0 kfork() P1
 

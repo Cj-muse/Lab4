@@ -11,8 +11,9 @@ int kcinth()
   char str[64];
   u16 segment, offset; int a, b, c, d, r;
   segment = running->uss; offset = running->usp;
-  
+
   printf("kcinth()\n\r");
+  printf("here\n");
   /* get syscall parameters from ustack */
   a = get_word(segment, offset + 2*PA);
   b = get_word(segment, offset + 2*(PA+1));
@@ -43,8 +44,12 @@ int kcinth()
 int kkfork()
 {
    //use you kfork() in kernel;
-   kfork();
-  //return child pid or -1 to Umode!!!
+   PROC *child = kfork("/bin/u1");
+   if(child->pid >= 0)
+   {
+     return child->pid;
+   }
+   return -1;  //return child pid or -1 to Umode!!!
 }
 
 int ktswitch()
@@ -54,13 +59,22 @@ int ktswitch()
 
 int kkwait(int *status)
 {
-
   //use YOUR kwait() in LAB3;
+  int r = kwait(status);
+  if (r >= 0)  { return 0; }
+  return -1;
   //return values to Umode!!!
 }
 
 int kkexit(int value)
 {
-    //use your kexit() in LAB3
-    //do NOT let P1 die
+    char str[64];
+    int i = 0, r = 0;
+
+    printf("enter exit value: ");
+    gets(str);
+    i = strtoint(str);
+    r = kexit(i);
+    if (r >= 0)  { return 0; }
+    return -1;
 }
