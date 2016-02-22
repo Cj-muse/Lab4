@@ -1,7 +1,7 @@
 // ucode.c file
 
 char *cmd[]={"getpid", "ps", "chname", "kfork",
-  "switch", "wait", "exit", "getc", "putc",0};
+  "switch", "wait", "exit", "getc", 0};
 
 #define LEN 64
 
@@ -9,7 +9,7 @@ int show_menu()
 {
    printf("***************** Menu *******************\n\r");
    printf("*  ps  chname  kfork  switch  wait  exit *\n\r");
-   printf("*   getc  putc                    \n");
+   printf("*   getc                    \n");
    printf("******************************************\n\r");
 }
 
@@ -37,7 +37,7 @@ int kswitch() { return syscall(4,0,0,0); }
 int wait(int *status) { return syscall(5,status,0,0); }
 int exit(int exitValue) { syscall(6,exitValue,0,0); }
 int cmgetc(){return syscall(7,0,0,0);}
-int cmputc(char c){return syscall(8,c,0,0);}
+//int cmputc(char c){return syscall(8,c,0,0);}
 
 
 int geti()

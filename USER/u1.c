@@ -25,8 +25,8 @@ main()
            case 5 : wait();     break;
            case 6 : exit();     break;
            case 7 : cmgetc();   break;
-           case 8 : cmputc();   break;
-           
+           //case 8 : cmputc();   break;
+
            default: invalid(name); break;
     }
   }
