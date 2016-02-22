@@ -8,6 +8,7 @@ int body(void)
    char c, str[64];
 
    printf("proc %d resumes to body()\n\r", running->pid);
+   showLists();
    while(1)
    {
       printf("\rproc %d running : enter a key [s|f|z|a|w|q|u|p|l]: ", running->pid);

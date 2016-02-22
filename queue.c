@@ -126,7 +126,7 @@ int printList(char *name, PROC *list) //: print name=list contents
 
 	while (list && (count < NPROC))
 	{
-		printf("[%d, %d]->", list->pid, list->priority);
+		printf("%d->", list->pid);
       list = list->next;
       count++;
 	}
@@ -135,7 +135,9 @@ int printList(char *name, PROC *list) //: print name=list contents
 
 void showLists()
 {
+  printf("-------------------------------------------------\n");
   printList("freeList", freeList);
   printList("readyQueue", readyQueue);
-  printList("sleepList", sleepList);  
+  printList("sleepList", sleepList);
+  printf("-------------------------------------------------\n");
 }

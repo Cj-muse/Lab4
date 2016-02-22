@@ -63,10 +63,13 @@ int ktswitch()
 int kkwait(int *status)
 {
   //use YOUR kwait() in LAB3;
-  int r = kwait(status);
-  if (r >= 0)  { return 0; }
-  return -1;
-  //return values to Umode!!!
+  int r = 0;
+  r = kwait(status);
+  if (r >= 0)
+  {
+    printf("resurected child %d\n", r);
+  }
+  return r;
 }
 
 int kkexit(int value)
