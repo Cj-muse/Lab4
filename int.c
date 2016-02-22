@@ -32,7 +32,7 @@ int kcinth()
 
        /***gec()/putc syscalls****/
        case 7 : r = kgetc();        break;
-       case 8 : r = kputc(b);        break;
+       //case 8 : r = kputc(b);        break;
 
        case 99: kkexit(b);            break;
        default: printf("invalid syscall # : %d\n", a);
@@ -85,24 +85,28 @@ int kkexit(int value)
 // kgetc() and kputc();
 int kgetc()
 {
-  char c = getc();
+  char c;
+  printf("Please enter a character: ");
+  c = getc();
   if(c == -1)
   {
     printf("kgetc() failed!\n");
     return -1;
   }
-  printf("kgetc() success!\n");
-  return c;
+  kputc(c);
+  //printf("kgetc() success!\n");
+  return 0;
 }
 
 int kputc(char c)
 {
   int i = putc(c);
+  printf("\n");
   if (i == -1)
   {
     printf("kputc() failed!\n");
     return -1;
   }
-  printf("kputc() success!\n");
+  //printf("kputc() success!\n");
   return i;
 }
